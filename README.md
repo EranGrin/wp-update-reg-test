@@ -1,0 +1,1 @@
+# wp-update-reg-test
