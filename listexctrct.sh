@@ -14,16 +14,30 @@ PLGNAME=$(echo "$PLGLIST" | jq -r '.[] | .name')
 
 echo $PLGNAME
 
+# UPDATERESULT=$(wp --path=$SITE_PATH plugin update --format=json duplicator-pro | jq -r '.[] | .status')
+
+# echo $UPDATERESULT
+
 #run the command to update the plugin based on the string
 # //wp --path=$SITE_PATH plugin update $PLGNAME
 
 #create a loop to run an update command for each of the plugins name
 
-array=( $PLGNAME )
-for i in "${array[@]}"
-do
-	echo $i
-	wp --path=$SITE_PATH plugin update $i
-done
+# array=( $PLGNAME )
+# for i in "${array[@]}"
+# do
+# 	echo $i
+# 	wp --path=$SITE_PATH plugin update --format=json $i
+# done
 
 # add vr-test to the loop
+
+array=( $PLGNAME )
+for i in "${array[@]}"
+  do
+  UPDATERESULT=$(wp --path=$SITE_PATH plugin update --format=json $i | jq -r '.[] | .status')
+
+    if  [ "$UPDATERESULT" == "Error" ]; then
+    echo "success"
+    fi
+done
