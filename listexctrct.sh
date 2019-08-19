@@ -13,14 +13,28 @@ SITE_NAME=eulachklinik
 SITE_PATH=/Applications/MAMP/htdocs/eulachklinik
 SITE_URL=http://localhost:8888/eulachklinik/
 
+PS2="👆"
+PS1="⚡"
 red=`tput setaf 1`
 green=`tput setaf 2`
 reset=`tput sgr0`
 
+#Extrsact the name value from the json and assaign to var array
+PLGLIST=$(wp --path=$SITE_PATH  plugin list --status=active --update=available --fields=name --format=json)
+
+#array of plugins name
+PLGNAME=$(echo "$PLGLIST" | jq -r '.[] | .name')
+
+
+echo " $(tput setaf 1) AVILABLE UPDATES:$(tput sgr0) $(tput setaf 2)$PLGNAME $(tput sgr0)"
+
+
 # crawl the websit
-echo would you like to create a new backstop config json file
-echo this will crawl the website dom and create backstop config json
-read -p "$(tput setaf 1)ATTENTION !$(tput sgr 0) Would you like to create a new backstop config json file " -n 1 -r
+echo "\n"
+echo  👆 would you like to create a new backstop config json file
+echo  👆 this will crawl the website dom and create backstop config json file that will OVERWRITE the present config file
+echo  👆 all custom configuration in the config file will be lost
+read -p "$(tput setaf 1) $PS1 ! ATTENTION !$(tput sgr 0) Would you like to create a new backstop config json file for $SITE_NAME  " -n 1 -r
 
 if [[  $REPLY =~ ^[Yy]$ ]]
   then
@@ -28,28 +42,34 @@ if [[  $REPLY =~ ^[Yy]$ ]]
   else
     FILE=$SITE_NAME.json
       if [ ! -f "$FILE" ]; then
-      echo "\n $(tput setaf 1)$FILE does not exist \n $(tput sgr 0)"
+      echo "\n"
+      echo "\n $(tput setaf 1)$FILE does not exist $(tput sgr0)"
       exit
     fi
 fi
 
 
-PLGLIST=$(wp --path=$SITE_PATH  plugin list --status=active --update=available --fields=name --format=json)
 
-#Extrsact the name value from the json and assaign to var array
-# //echo "$PLGLIST" | jq -r '.[] | .name'
-PLGNAME=$(echo "$PLGLIST" | jq -r '.[] | .name')
 
-echo AVILABLE UPDATES: $PLGNAME
+# while true; do
+#     read -p "$(tput setaf 1)ATTENTION !$(tput sgr 0) Would you like to create a new backstop reference" yn
+#     case $yn in
+#         [Yy]* ) backstop approve --config $SITE_NAME.json; break;;
+#         [Nn]* ) exit;;
+#         * ) echo "Please answer yes or no.";;
+#       esac
+#     done
+echo "\n"
+read -p "$(tput setaf 1) $PS1 ! ATTENTION ! $(tput sgr 0) Would you like to create a new backstop reference " -n 1 -r
 
-read -p "$(tput setaf 1)ATTENTION !$(tput sgr 0) Would you like to create a new backstop reference " -n 1 -r
 
-if [[  $REPLY =~ ^[Yy]$ ]]
+if [[ $REPLY =~ ^[Yy]$ ]]
   then
+    echo "\n"
+    echo "$(tput setaf 2) $PS1 start the approve procces for the present visual state of the website $(tput sgr 0)"
+
     backstop approve --config $SITE_NAME.json
-
 fi
-
 # //UPDATERESULT=$(wp --path=$SITE_PATH plugin update --format=json duplicator-pro | jq -r '.[] | .status')
 # //echo $UPDATERESULT
 
@@ -58,38 +78,37 @@ fi
 
 #create a loop to run an update command for each of the plugins name
 
-# array=( $PLGNAME )
-# for i in "${array[@]}"
-# do
-# 	echo $i
-# 	wp --path=$SITE_PATH plugin update --format=json $i
-# done
-
 # add vr-test to the loop
-
+echo "\n"
+echo " $PS1 Start the loop for plugin update"
 array=( $PLGNAME )
 for i in "${array[@]}"
  do
-  echo "$(tput setaf 2)start update plugin name:$i $(tput sgr 0)"
+  echo "\n"
+  echo "$(tput setaf 2) $PS1 start update plugin name:$i $(tput sgr 0)"
+  echo "\n"
+
   UPDATERESULT=$(wp --path=$SITE_PATH plugin update --format=json $i | jq -r '.[] | .status')
     if  [ "$UPDATERESULT" == "Error" ]; then
-
-        # echo "test"
-        echo "$(tput setaf 1)!! ERROR !! COULD NOT UPDATE: $i(tput sgr 0) script will continue to next update"
-
-      continue
+        echo "\n"
+        echo "$(tput setaf 1) $PS1 !! ERROR !! COULD NOT UPDATE: $i $(tput sgr0) script will continue to next update"
 
       else
 
-      backstop test --config $SITE_NAME.json
+        responsefile=$(mktemp -t BKSTOPTEST)
+        backstop test --config $SITE_NAME.json >$responsefile &
+        pid=$!
+        wait $pid
+        BKSTOPTEST=$(<$responsefile)
+        rm $responsefile
 
-      ##execute the reg-test
-      # backstopjs test
 
-      if (( input == 0 ));
+      # if (( input == 0 ));
+
+      if  [[ "$BKSTOPTEST" =~ [\berror\b] ]];
         then
-          # echo "can continue to the next plugin"
-          read -p "$(tput setaf 1)!! ERROR FOUND !! after update:$i $(tput sgr 0) do you still like to continue to the next update plugin" -n 1 -r
+          echo "\n"
+          read -p "$(tput setaf 1) $PS1 !! ERROR FOUND !! after update:$i do you still like to continue to the next plugin update $(tput sgr0) " -n 1 -r
 
           if [[ ! $REPLY =~ ^[Yy]$ ]]
           then exit 1
@@ -97,3 +116,6 @@ for i in "${array[@]}"
       fi
     fi
 done
+
+
+### Maybe need to add a kill chromuim as it seeems like the process leave allot of running background processes - killall Chromium
