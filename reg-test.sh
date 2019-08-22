@@ -13,7 +13,6 @@ SITE_NAME=eulachklinik
 SITE_PATH=/Applications/MAMP/htdocs/eulachklinik
 SITE_URL=http://localhost:8888/eulachklinik/
 
-PS2="👆"
 PS1="⚡"
 red=`tput setaf 1`
 green=`tput setaf 2`
@@ -25,9 +24,7 @@ PLGLIST=$(wp --path=$SITE_PATH  plugin list --status=active --update=available -
 #array of plugins name
 PLGNAME=$(echo "$PLGLIST" | jq -r '.[] | .name')
 
-
 echo " $(tput setaf 1) AVILABLE UPDATES:$(tput sgr0) $(tput setaf 2)$PLGNAME $(tput sgr0)"
-
 
 # crawl the websit
 echo "\n"
@@ -47,9 +44,6 @@ if [[  $REPLY =~ ^[Yy]$ ]]
       exit
     fi
 fi
-
-
-
 
 # while true; do
 #     read -p "$(tput setaf 1)ATTENTION !$(tput sgr 0) Would you like to create a new backstop reference" yn
@@ -81,6 +75,7 @@ fi
 # add vr-test to the loop
 echo "\n"
 echo " $PS1 Start the loop for plugin update"
+
 array=( $PLGNAME )
 for i in "${array[@]}"
  do
@@ -89,7 +84,8 @@ for i in "${array[@]}"
   echo "\n"
 
   UPDATERESULT=$(wp --path=$SITE_PATH plugin update --format=json $i | jq -r '.[] | .status')
-    if  [ "$UPDATERESULT" == "Error" ]; then
+    if [ "$UPDATERESULT" == "Error" ];
+      then
         echo "\n"
         echo "$(tput setaf 1) $PS1 !! ERROR !! COULD NOT UPDATE: $i $(tput sgr0) script will continue to next update"
 
@@ -102,10 +98,9 @@ for i in "${array[@]}"
         BKSTOPTEST=$(<$responsefile)
         rm $responsefile
 
-
       # if (( input == 0 ));
 
-      if  [[ "$BKSTOPTEST" =~ [\berror\b] ]];
+      if [[ "$BKSTOPTEST" =~ [\berror\b] ]];
         then
           echo "\n"
           read -p "$(tput setaf 1) $PS1 !! ERROR FOUND !! after update:$i do you still like to continue to the next plugin update $(tput sgr0) " -n 1 -r
