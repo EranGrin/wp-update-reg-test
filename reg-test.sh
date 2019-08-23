@@ -17,6 +17,7 @@ PS1="⚡"
 red=`tput setaf 1`
 green=`tput setaf 2`
 reset=`tput sgr0`
+bold=`tput bold`
 
 #Extrsact the name value from the json and assaign to var array
 PLGLIST=$(wp --path=$SITE_PATH  plugin list --status=active --update=available --fields=name --format=json)
@@ -24,14 +25,14 @@ PLGLIST=$(wp --path=$SITE_PATH  plugin list --status=active --update=available -
 #array of plugins name
 PLGNAME=$(echo "$PLGLIST" | jq -r '.[] | .name')
 
-echo " $(tput setaf 1) AVILABLE UPDATES:$(tput sgr0) $(tput setaf 2)$PLGNAME $(tput sgr0)"
+echo "$(tput setaf 1)AVILABLE UPDATES:\n$(tput sgr0)$(tput setaf 2)$PLGNAME$(tput sgr0)"
 
 # crawl the websit
 echo "\n"
 echo  👆 would you like to create a new backstop config json file
-echo  👆 this will crawl the website dom and create backstop config json file that will OVERWRITE the present config file
+echo  👆 this will crawl the website dom and create backstop config json file that will $(tput bold)OVERWRITE $(tput sgr0)the present config file
 echo  👆 all custom configuration in the config file will be lost
-read -p "$(tput setaf 1) $PS1 ! ATTENTION !$(tput sgr 0) Would you like to create a new backstop config json file for $SITE_NAME  " -n 1 -r
+read -p "$(tput setaf 1) $PS1 ! ATTENTION !$(tput sgr 0) Would you like to create a new backstop config json file for $(tput bold)$SITE_NAME$(tput sgr0) [ Y / N ] " -n 1 -r
 
 if [[  $REPLY =~ ^[Yy]$ ]]
   then
@@ -54,7 +55,7 @@ fi
 #       esac
 #     done
 echo "\n"
-read -p "$(tput setaf 1) $PS1 ! ATTENTION ! $(tput sgr 0) Would you like to create a new backstop reference " -n 1 -r
+read -p "$(tput setaf 1) $PS1 ! ATTENTION ! $(tput sgr 0) Would you like to create a new backstop reference [ Y / N ] " -n 1 -r
 
 
 if [[ $REPLY =~ ^[Yy]$ ]]
@@ -85,30 +86,44 @@ for i in "${array[@]}"
 
   UPDATERESULT=$(wp --path=$SITE_PATH plugin update --format=json $i | jq -r '.[] | .status')
     if [ "$UPDATERESULT" == "Error" ];
-      then
-        echo "\n"
-        echo "$(tput setaf 1) $PS1 !! ERROR !! COULD NOT UPDATE: $i $(tput sgr0) script will continue to next update"
-
-      else
-
-        responsefile=$(mktemp -t BKSTOPTEST)
-        backstop test --config $SITE_NAME.json >$responsefile &
-        pid=$!
-        wait $pid
-        BKSTOPTEST=$(<$responsefile)
-        rm $responsefile
-
-      # if (( input == 0 ));
-
-      if [[ "$BKSTOPTEST" =~ [\berror\b] ]];
         then
           echo "\n"
-          read -p "$(tput setaf 1) $PS1 !! ERROR FOUND !! after update:$i do you still like to continue to the next plugin update $(tput sgr0) " -n 1 -r
+          echo "$(tput setaf 1) $PS1 !! ERROR !! COULD NOT UPDATE: $i $(tput sgr0) script will continue to next update"
 
-          if [[ ! $REPLY =~ ^[Yy]$ ]]
-          then exit 1
+        else
+
+          responsefile=$(mktemp -t BKSTOPTEST)
+          backstop test --config $SITE_NAME.json >$responsefile &
+          pid=$!
+          wait $pid
+          BKSTOPTEST=$(<$responsefile)
+          rm $responsefile
+
+        # if (( input == 0 ));
+
+      if [[ "$BKSTOPTEST" =~ [\berror\b] ]];
+          then
+              echo "\n"
+              read -p "$(tput setaf 1) $PS1 !! ERROR FOUND !! after update:$i do you still like to continue to the next plugin update $(tput sgr0) [ Y / N ] " -n 1 -r
+
+              if [[  $REPLY =~ ^[Yy]$ ]]
+                then
+                  echo "\n"
+                  read -p "$(tput setaf 1) $PS1 ! ATTENTION ! $(tput sgr 0) Would you like to create a new backstop reference [ Y / N ] " -n 1 -r
+                  if [[  $REPLY =~ ^[Yy]$ ]]
+                      then
+                        backstop approve --config $SITE_NAME.json
+                      else
+                        continue
+                    fi
+                else
+                  exit
+              fi
+
+          else
+            continue
+
         fi
-      fi
     fi
 done
 
