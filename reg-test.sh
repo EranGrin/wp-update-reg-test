@@ -89,6 +89,7 @@ for i in "${array[@]}"
         then
           echo "\n"
           echo "$(tput setaf 1) $PS1 !! ERROR !! COULD NOT UPDATE: $i $(tput sgr0) script will continue to next update"
+          continue
 
         else
 
@@ -100,9 +101,11 @@ for i in "${array[@]}"
           rm $responsefile
 
         # if (( input == 0 ));
+        echo "$BKSTOPTEST"
+      if [[ $BKSTOPTEST =~ error ]];
 
-      if [[ "$BKSTOPTEST" =~ [\berror\b] ]];
           then
+            echo "error found"
               echo "\n"
               read -p "$(tput setaf 1) $PS1 !! ERROR FOUND !! after update:$i do you still like to continue to the next plugin update $(tput sgr0) [ Y / N ] " -n 1 -r
 
