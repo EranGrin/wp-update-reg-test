@@ -15,7 +15,7 @@ DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 PARENT_DIR=$(dirname "$DIR")
 source $PARENT_DIR/dist/list_input.sh
 
-website_name=$(cat reg-test.json | jq -j --arg c "' " --arg b "'" '$b + .[] .name + $c')
+website_name=$(cat website_input.json | jq -j --arg c "' " --arg b "'" '$b + .[] .name + $c')
 
 
 
