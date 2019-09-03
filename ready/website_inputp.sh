@@ -28,7 +28,7 @@ SITE_URL=$(cat website_input.json | jq -j --arg p "$SITE_NAME" '.[] | select(.na
 
 
 # Need to cehck if the backstop init is already existing otherwise fire the backstop init
-# To add a backstop test if this is the first time the website is appprove
+# To add a backstop test if this is the first time the website is appprove 
 
 PS1="⚡"
 red=`tput setaf 1`
@@ -76,62 +76,58 @@ if [[ $REPLY =~ ^[Yy]$ ]]
     backstop approve --config $SITE_NAME.json
 fi
 
-backstop test --config $SITE_NAME.json 
+echo "\n"
+echo " $PS1 Start the loop for plugin update"
 
+array=( $PLGNAME )
+for i in "${array[@]}"
+ do
+  echo "\n"
+  echo "$(tput setaf 2) $PS1 start update plugin name:$i $(tput sgr 0)"
+  echo "\n"
 
+  UPDATERESULT=$(wp --path=$SITE_PATH plugin update --format=json $i | jq -r '.[] | .status')
+    if [ "$UPDATERESULT" == "Error" ];
+        then
+          echo "\n"
+          echo "$(tput setaf 1) $PS1 !! ERROR !! COULD NOT UPDATE: $i $(tput sgr0) script will continue to next update"
+          continue
 
-# echo "\n"
-# echo " $PS1 Start the loop for plugin update"
-#
-# array=( $PLGNAME )
-# for i in "${array[@]}"
-#  do
-#   echo "\n"
-#   echo "$(tput setaf 2) $PS1 start update plugin name:$i $(tput sgr 0)"
-#   echo "\n"
-#
-#   UPDATERESULT=$(wp --path=$SITE_PATH plugin update --format=json $i | jq -r '.[] | .status')
-#     if [ "$UPDATERESULT" == "Error" ];
-#         then
-#           echo "\n"
-#           echo "$(tput setaf 1) $PS1 !! ERROR !! COULD NOT UPDATE: $i $(tput sgr0) script will continue to next update"
-#           continue
-#
-#         else
-#
-#           responsefile=$(mktemp -t BKSTOPTEST)
-#           backstop test --config $SITE_NAME.json >$responsefile &
-#           pid=$!
-#           wait $pid
-#           BKSTOPTEST=$(<$responsefile)
-#           rm $responsefile
-#
-#         # if (( input == 0 ));
-#         echo "$BKSTOPTEST"
-#       if [[ $BKSTOPTEST =~ error ]];
-#
-#           then
-#             echo "error found"
-#               echo "\n"
-#               read -p "$(tput setaf 1) $PS1 !! ERROR FOUND !! after update:$i do you still like to continue to the next plugin update $(tput sgr0) [ Y / N ] " -n 1 -r
-#
-#               if [[  $REPLY =~ ^[Yy]$ ]]
-#                 then
-#                   echo "\n"
-#                   read -p "$(tput setaf 1) $PS1 ! ATTENTION ! $(tput sgr 0) Would you like to create a new backstop reference [ Y / N ] " -n 1 -r
-#                   if [[  $REPLY =~ ^[Yy]$ ]]
-#                       then
-#                         backstop approve --config $SITE_NAME.json
-#                       else
-#                         continue
-#                     fi
-#                 else
-#                   exit
-#               fi
-#
-#           else
-#             continue
-#
-#         fi
-#     fi
-# done
+        else
+
+          responsefile=$(mktemp -t BKSTOPTEST)
+          backstop test --config $SITE_NAME.json >$responsefile &
+          pid=$!
+          wait $pid
+          BKSTOPTEST=$(<$responsefile)
+          rm $responsefile
+
+        # if (( input == 0 ));
+        echo "$BKSTOPTEST"
+      if [[ $BKSTOPTEST =~ error ]];
+
+          then
+            echo "error found"
+              echo "\n"
+              read -p "$(tput setaf 1) $PS1 !! ERROR FOUND !! after update:$i do you still like to continue to the next plugin update $(tput sgr0) [ Y / N ] " -n 1 -r
+
+              if [[  $REPLY =~ ^[Yy]$ ]]
+                then
+                  echo "\n"
+                  read -p "$(tput setaf 1) $PS1 ! ATTENTION ! $(tput sgr 0) Would you like to create a new backstop reference [ Y / N ] " -n 1 -r
+                  if [[  $REPLY =~ ^[Yy]$ ]]
+                      then
+                        backstop approve --config $SITE_NAME.json
+                      else
+                        continue
+                    fi
+                else
+                  exit
+              fi
+
+          else
+            continue
+
+        fi
+    fi
+done
