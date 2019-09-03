@@ -1,14 +1,63 @@
 [
-   {
-      "id": "1",
-      "name": "eulachklinik",
-      "path": "/Applications/MAMP/htdocs/eulachklinik",
-      "url": "http://localhost:8888/eulachklinik/"
-    },
-    {
-      "id": "2",
-      "name": "Arepo",
-      "path": "/Applications/MAMP/htdocs/arepo",
-      "url": "http://localhost:8888/arepo/"
-    }
+  {
+    "id": "1",
+    "name": "alte-scheune-loddin",
+    "path": "",
+    "url": "https://alte-scheune-loddin.de/"
+  },
+  {
+    "id": "2",
+    "name": "ambulatorioavanti",
+    "path": "",
+    "url": "https://ambulatorioavanti.ch"
+  },
+  {
+    "id": "3",
+    "name": "bildhauer-kunststudium",
+    "path": "",
+    "url": "https://www.bildhauer-kunststudium.com"
+  },
+  {
+    "id": "4",
+    "name": "blog.ketoshop.ch",
+    "path": "",
+    "url": "https://blog.ketoshop.ch"
+  },
+  {
+    "id": "5",
+    "name": "che-bella-vista",
+    "path": "",
+    "url": "https://che-bella-vista.com"
+  },
+  {
+    "id": "6",
+    "name": "esio",
+    "path": "",
+    "url": "https://esio.info/"
+  },
+  {
+    "id": "7",
+    "name": "focks-ferien",
+    "path": "",
+    "url": "https://focks-ferien.de"
+  },
+  {
+    "id": "8",
+    "name": "eulachklinik",
+    "path": "",
+    "url": "https://eulachklinik.ch"
+  },
+  {
+    "id": "9",
+    "name": "fredrolf",
+    "path": "",
+    "url": "https://www.fredrolf.de/"
+  },
+  {
+    "id": "10",
+    "name": "integrative-kliniken",
+    "path": "",
+    "url": "https://integrative-kliniken.ch"
+  }
+
 ]
