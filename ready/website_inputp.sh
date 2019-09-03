@@ -73,11 +73,48 @@ if [[ $REPLY =~ ^[Yy]$ ]]
     echo "\n"
     echo "$(tput setaf 2) $PS1 start the approve procces for the present visual state of the website $(tput sgr 0)"
 
-    
+
     backstop reference --config $SITE_NAME.json
 fi
 
-backstop test --config $SITE_NAME.json
+  # backstop test --config $SITE_NAME.json
+
+  responsefile=$(mktemp -t BKSTOPTEST)
+  backstop test --config $SITE_NAME.json >$responsefile &
+  pid=$!
+  wait $pid
+  BKSTOPTEST=$(<$responsefile)
+  rm $responsefile
+
+
+  echo "$BKSTOPTEST"
+      if [[ $BKSTOPTEST =~ error ]];
+
+          then
+            echo "error found"
+              echo "\n"
+              read -p "$(tput setaf 1) $PS1 !! ERROR FOUND !! after update:$i do you still like to continue to the next plugin update $(tput sgr0) [ Y / N ] " -n 1 -r
+
+              if [[  $REPLY =~ ^[Yy]$ ]]
+                then
+                  echo "\n"
+                  read -p "$(tput setaf 1) $PS1 ! ATTENTION ! $(tput sgr 0) Would you like to create a new backstop reference [ Y / N ] " -n 1 -r
+                  if [[  $REPLY =~ ^[Yy]$ ]]
+                      then
+                        backstop approve --config $SITE_NAME.json
+                      else
+                        continue
+                    fi
+                else
+                  exit
+              fi
+
+          else
+            continue
+
+        fi
+
+
 
 
 
