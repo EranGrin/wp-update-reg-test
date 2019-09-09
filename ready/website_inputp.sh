@@ -17,13 +17,13 @@ website_name=$(cat website_input.json | jq -j --arg c "' " --arg b "'" '$b + .[]
 
 
 website=( $website_name )
-list_input "What would you like to drink today (1st Drink)?" website selected_website
+list_input "Which website would you like to Test ?" website selected_website
 
 echo "website: $selected_website"
 
 SITE_NAME=$selected_website
 # SITE_PATH=$(cat website_input.json | jq -j --arg p "$SITE_NAME" '.[] | select(.name == "eulachklinik" ) .path')
-SITE_URL=$(cat website_input.json | jq -j --arg p "$SITE_NAME" '.[] | select(.name == "eulachklinik" ) .url')
+SITE_URL=$(cat website_input.json | jq -j --arg p "$SITE_NAME" '.[] | select(.name==$p) .url')
 
 
 
@@ -88,7 +88,7 @@ fi
 
 
   echo "$BKSTOPTEST"
-      if [[ $BKSTOPTEST =~ error ]];
+      if [[ $BKSTOPTEST =~ ^[error]$ ]];
 
           then
             echo "error found"

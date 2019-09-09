@@ -58,6 +58,71 @@
     "name": "integrative-kliniken",
     "path": "",
     "url": "https://integrative-kliniken.ch"
+  },
+  {
+    "id": "11",
+    "name": "geburtshilfe-richterswil",
+    "path": "",
+    "url": "https://geburtshilfe-richterswil.ch/"
+  },
+  {
+    "id": "12",
+    "name": "kunsthaus.info",
+    "path": "",
+    "url": "https://www.kunsthaus.info"
+  },
+  {
+    "id": "13",
+    "name": "integrative-onkologie",
+    "path": "",
+    "url": "https://integrative-onkologie.ch"
+  },
+  {
+    "id": "14",
+    "name": "limmatklinik",
+    "path": "",
+    "url": "https://limmatklinik.ch"
+  },
+  {
+    "id": "15",
+    "name": "manuela-geugelin",
+    "path": "",
+    "url": "https://manuela-geugelin.de"
+  },
+  {
+    "id": "16",
+    "name": "margrit-hoffmann",
+    "path": "",
+    "url": "https://margrit-hoffmann.de"
+  },
+  {
+    "id": "17",
+    "name": "martin-hunke",
+    "path": "",
+    "url": "https://martin-hunke.de"
+  },
+  {
+    "id": "18",
+    "name": "nachtarzt",
+    "path": "",
+    "url": "https://nachtarzt.ch"
+  },
+  {
+    "id": "19",
+    "name": "narkose",
+    "path": "",
+    "url": "https://narkose.ch"
+  },
+  {
+    "id": "20",
+    "name": "nios",
+    "path": "",
+    "url": "https://nios.ch"
+  },
+  {
+    "id": "21",
+    "name": "ghr",
+    "path": "",
+    "url": "http://localhost:8888/ghr/"
   }
-
 ]
